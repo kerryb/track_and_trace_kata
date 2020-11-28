@@ -31,4 +31,5 @@ TrackAndTrace.process(
   "Person 3"
 )
 ```
+
 Output: `["Person 1", "Person 2"]`
