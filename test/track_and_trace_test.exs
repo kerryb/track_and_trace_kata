@@ -18,12 +18,16 @@ defmodule TrackAndTraceTest do
                }
     end
   end
+
   describe "TrackAndTrace/walk_graph/2" do
     test "returns directly-linked nodes" do
-      graph = %{
-        {:name, "Alice"} => [{:place, 1}, {:place, 2}],
-        }
-      assert TrackAndTrace.walk_graph(graph, {:name, "Alice"}) == [{:place, 1}, {:place, 2}]
+      graph = %{1 => [20, 30], 20 => [1], 30 => [1]}
+      assert TrackAndTrace.walk_graph(graph, 1) == [20, 30]
+    end
+
+    test "returns nodes separated by two edges" do
+      graph = %{1 => [20, 30], 20 => [1, 2], 30 => [1], 2 => [20], 3 => [40], 40 => [3]}
+      assert TrackAndTrace.walk_graph(graph, 1) == [20, 30, 2]
     end
   end
 end
