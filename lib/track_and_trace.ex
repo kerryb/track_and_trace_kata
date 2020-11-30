@@ -40,11 +40,21 @@ defmodule TrackAndTrace do
     |> MapSet.new()
   end
 
-  defp map_places_to_name graph, person do
+  defp map_places_to_name(graph, person) do
     Enum.reduce(person.check_ins, graph, &add_place_to_graph(&1, person.name, &2))
   end
 
   defp add_place_to_graph(place, name, graph) do
-    Map.update(graph, {:place, place}, MapSet.new([{:name, name}]), &MapSet.put(&1, {:name, name}))
+    Map.update(
+      graph,
+      {:place, place},
+      MapSet.new([{:name, name}]),
+      &MapSet.put(&1, {:name, name})
+    )
+  end
+
+  @doc false
+  def walk_graph(graph, node) do
+    graph[node]
   end
 end
