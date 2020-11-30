@@ -31,10 +31,10 @@ defmodule TrackAndTrace do
   end
 
   defp map_name_to_places(graph, person) do
-    Map.put(graph, {:name, person.name}, new_place_set(person.check_ins))
+    Map.put(graph, {:name, person.name}, new_set_of_places(person.check_ins))
   end
 
-  defp new_place_set(check_ins) do
+  defp new_set_of_places(check_ins) do
     check_ins
     |> Enum.map(&{:place, &1})
     |> MapSet.new()
