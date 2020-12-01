@@ -31,5 +31,10 @@ defmodule TrackAndTraceTest do
       graph = %{1 => [20, 30], 20 => [1, 2], 30 => [1], 2 => [20], 3 => [40], 40 => [3]}
       assert_lists_equal(TrackAndTrace.walk_graph(graph, 1), [20, 30, 2])
     end
+
+    test "returns nodes separated by any number of edges" do
+      graph = %{1 => [20, 30], 20 => [1, 2], 30 => [1], 2 => [20, 40], 3 => [40], 40 => [2, 3] }
+      assert_lists_equal(TrackAndTrace.walk_graph(graph, 1), [20, 30, 2, 40, 3])
+    end
   end
 end
