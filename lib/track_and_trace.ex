@@ -55,6 +55,14 @@ defmodule TrackAndTrace do
 
   @doc false
   def walk_graph(graph, node) do
-    graph[node] ++ Enum.flat_map(graph[node], &graph[&1]) |> Enum.reject(& &1 == node)
+    walk_graph(graph, node, [node])
+  end
+
+  defp walk_graph(graph, node, found_nodes) do
+    new_nodes = Enum.reject(graph[node], &(&1 in found_nodes))
+
+    Enum.flat_map(new_nodes, fn neighbour ->
+      [neighbour | walk_graph(graph, neighbour, found_nodes ++ new_nodes)]
+    end)
   end
 end

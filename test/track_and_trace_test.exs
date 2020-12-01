@@ -1,5 +1,7 @@
 defmodule TrackAndTraceTest do
   use ExUnit.Case
+  # Assertions.assert_lists_equal/2 compares lists ignoring order
+  import Assertions, only: [assert_lists_equal: 2]
   doctest TrackAndTrace
 
   describe "TrackAndTrace/build_graph/1" do
@@ -22,12 +24,12 @@ defmodule TrackAndTraceTest do
   describe "TrackAndTrace/walk_graph/2" do
     test "returns directly-linked nodes" do
       graph = %{1 => [20, 30], 20 => [1], 30 => [1]}
-      assert TrackAndTrace.walk_graph(graph, 1) == [20, 30]
+      assert_lists_equal(TrackAndTrace.walk_graph(graph, 1), [20, 30])
     end
 
     test "returns nodes separated by two edges" do
       graph = %{1 => [20, 30], 20 => [1, 2], 30 => [1], 2 => [20], 3 => [40], 40 => [3]}
-      assert TrackAndTrace.walk_graph(graph, 1) == [20, 30, 2]
+      assert_lists_equal(TrackAndTrace.walk_graph(graph, 1), [20, 30, 2])
     end
   end
 end
