@@ -14,8 +14,12 @@ defmodule TrackAndTrace do
       ...> )
       ["Person 1", "Person 2"]
   """
-  def process(_people, _patient_zero) do
-    []
+  def process(people, patient_zero) do
+    people
+    |> build_graph()
+    |> walk_graph({:name, patient_zero})
+    |> get_names()
+    |> Enum.sort
   end
 
   # This annotation excludes the function from the module's documented public API
@@ -63,6 +67,13 @@ defmodule TrackAndTrace do
 
     Enum.flat_map(new_nodes, fn neighbour ->
       [neighbour | walk_graph(graph, neighbour, found_nodes ++ new_nodes)]
+    end)
+  end
+
+  defp get_names(nodes) do
+    Enum.flat_map(nodes, fn
+      {:name, name} -> [name]
+      _ -> []
     end)
   end
 end
