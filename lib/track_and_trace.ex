@@ -13,13 +13,16 @@ defmodule TrackAndTrace do
       ...>   "Person 3"
       ...> )
       ["Person 1", "Person 2"]
+
+  Disclaimer: I don't really know any graph theory, and the thing called a
+  graph is really just a bidirectional map of nodes to their neighbours.
   """
   def process(people, patient_zero) do
     people
     |> build_graph()
     |> walk_graph({:name, patient_zero})
     |> get_names()
-    |> Enum.sort
+    |> Enum.sort()
   end
 
   # This annotation excludes the function from the module's documented public API
@@ -40,20 +43,25 @@ defmodule TrackAndTrace do
 
   defp new_set_of_places(check_ins) do
     check_ins
-    |> Enum.map(&{:place, &1})
+    |> Enum.map(fn check_in -> {:place, check_in} end)
     |> MapSet.new()
   end
 
   defp map_places_to_name(graph, person) do
-    Enum.reduce(person.check_ins, graph, &add_place_to_graph(&1, person.name, &2))
+    Enum.reduce(person.check_ins, graph, fn check_in, graph ->
+      add_place_to_graph(check_in, person.name, graph)
+    end)
   end
 
   defp add_place_to_graph(place, name, graph) do
     Map.update(
       graph,
+      # key
       {:place, place},
+      # value if key not present
       MapSet.new([{:name, name}]),
-      &MapSet.put(&1, {:name, name})
+      #  transform for existing value against key
+      fn names -> MapSet.put(names, {:name, name}) end
     )
   end
 
@@ -63,7 +71,7 @@ defmodule TrackAndTrace do
   end
 
   defp walk_graph(graph, node, found_nodes) do
-    new_nodes = Enum.reject(graph[node], &(&1 in found_nodes))
+    new_nodes = Enum.reject(graph[node], fn n -> n in found_nodes end)
 
     Enum.flat_map(new_nodes, fn neighbour ->
       [neighbour | walk_graph(graph, neighbour, found_nodes ++ new_nodes)]
